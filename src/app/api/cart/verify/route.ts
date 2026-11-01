@@ -18,11 +18,17 @@ export async function POST(request: Request) {
   }
   try {
     const ids = [...new Set(parsed.data.items.map((item) => item.variantId))];
-    const variants = await prisma.productVariant.findMany({ where: { id: { in: ids }, product: { active: true } }, include: { product: true } });
-    const settingRows = await prisma.setting.findMany({ where: { key: { in: ["shippingFee", "freeShippingThreshold"] } } });
+    const variants = await prisma.orm.public.ProductVariant
+      .where((variant) => variant.id.in(ids))
+      .include("product")
+      .all();
+    const activeVariants = variants.filter((variant) => variant.product.active);
+    const settingRows = await prisma.orm.public.Setting
+      .where((setting) => setting.key.in(["shippingFee", "freeShippingThreshold"]))
+      .all();
     const settings = Object.fromEntries(settingRows.map((setting) => [setting.key, setting.value]));
     const rows = parsed.data.items.map((item) => {
-      const variant = variants.find((entry) => entry.id === item.variantId);
+      const variant = activeVariants.find((entry) => entry.id === item.variantId);
       return variant ? { variantId: variant.id, productName: variant.product.name, size: variant.size, price: variant.price, stock: variant.stock, requested: item.quantity, available: variant.stock >= item.quantity } : { variantId: item.variantId, available: false, stock: 0 };
     });
     return NextResponse.json({ items: rows, settings, valid: rows.every((item) => item.available) });

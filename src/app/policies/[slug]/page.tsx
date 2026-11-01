@@ -22,7 +22,7 @@ export default async function PolicyPage({ params }: PageProps) {
   let copy = policy.fallback;
   try {
     const { prisma } = await import("@/lib/prisma");
-    const setting = await prisma.setting.findUnique({ where: { key: policy.key } });
+    const setting = await prisma.orm.public.Setting.first({ key: policy.key });
     if (setting?.value) copy = setting.value;
   } catch { /* Display the published policy copy if the database is not connected. */ }
   return <main className="policy-page section-shell page-top"><span className="eyebrow-light">The details matter</span><h1 className="page-heading">{policy.title}.</h1><p className="policy-copy">{copy}</p></main>;

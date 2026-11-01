@@ -10,7 +10,9 @@ export async function GET() {
   const unauthorized = await requireAdmin();
   if (unauthorized) return unauthorized;
   try {
-    const settings = await prisma.setting.findMany({ orderBy: { key: "asc" } });
+    const settings = await prisma.orm.public.Setting
+      .orderBy((setting) => setting.key.asc())
+      .all();
     return NextResponse.json({ settings: Object.fromEntries(settings.map(({ key, value }) => [key, value])) });
   } catch {
     return NextResponse.json({ error: "Could not load settings." }, { status: 503 });
@@ -25,7 +27,15 @@ export async function PUT(request: Request) {
   const { shippingFee, freeShippingThreshold } = parsed.data;
   if ((shippingFee !== undefined && !/^\d{1,5}$/.test(shippingFee)) || (freeShippingThreshold !== undefined && !/^\d{1,6}$/.test(freeShippingThreshold))) return NextResponse.json({ error: "Shipping values must be whole rupee amounts." }, { status: 400 });
   try {
-    await prisma.$transaction(Object.entries(parsed.data).map(([key, value]) => prisma.setting.upsert({ where: { key }, update: { value }, create: { key, value } })));
+    await prisma.transaction(async (tx) => {
+      for (const [key, value] of Object.entries(parsed.data)) {
+        await tx.orm.public.Setting.upsert({
+          create: { key, value },
+          update: { value },
+          conflictOn: { key },
+        });
+      }
+    });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Could not save settings." }, { status: 503 });

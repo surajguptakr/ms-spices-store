@@ -7,7 +7,9 @@ export async function POST(request: Request) {
   const parsed = adminLoginSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Enter a valid email and password." }, { status: 400 });
   try {
-    const admin = await prisma.adminUser.findUnique({ where: { email: parsed.data.email.toLowerCase() } });
+    const admin = await prisma.orm.public.AdminUser.first({
+      email: parsed.data.email.toLowerCase(),
+    });
     if (!admin || !(await verifyPassword(parsed.data.password, admin.passwordHash))) return NextResponse.json({ error: "Email or password is incorrect." }, { status: 401 });
     await createSession(admin.email);
     return NextResponse.json({ success: true });

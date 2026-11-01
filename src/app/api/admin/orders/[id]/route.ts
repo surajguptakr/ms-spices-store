@@ -12,7 +12,10 @@ export async function PATCH(request: Request, { params }: RouteProps) {
   if (!parsed.success) return NextResponse.json({ error: "Invalid order status." }, { status: 400 });
   const { id } = await params;
   try {
-    const order = await prisma.order.update({ where: { id }, data: { status: parsed.data.status } });
+    const order = await prisma.orm.public.Order
+      .where({ id })
+      .update({ status: parsed.data.status });
+    if (!order) return NextResponse.json({ error: "Order not found." }, { status: 404 });
     return NextResponse.json({ order });
   } catch {
     return NextResponse.json({ error: "Order not found." }, { status: 404 });

@@ -1,8 +1,16 @@
-import type { Prisma } from "@prisma/client";
 import { categories, products, type Product } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 
-type ProductRow = Prisma.ProductGetPayload<{ include: { category: true; variants: true } }>;
+function findStoreProductRows() {
+  return prisma.orm.public.Product
+    .where({ active: true })
+    .include("category")
+    .include("variants")
+    .orderBy((product) => product.name.asc())
+    .all();
+}
+
+type ProductRow = Awaited<ReturnType<typeof findStoreProductRows>>[number];
 const productOrder = new Map(products.map((product, index) => [product.slug, index]));
 
 function mapProduct(row: ProductRow): Product {
@@ -15,7 +23,7 @@ function mapProduct(row: ProductRow): Product {
     categorySlug: row.category.slug,
     description: row.description,
     origin: row.origin,
-    ingredients: row.ingredients,
+    ingredients: row.ingredients.filter((ingredient): ingredient is string => ingredient !== null),
     imageUrl: galleryImages?.[0] ?? (row.imageUrl?.startsWith("/images/spices/") ? row.imageUrl : "/images/spices/placeholder.svg"),
     galleryImages,
     featured: row.featured,
@@ -34,7 +42,7 @@ function mapProduct(row: ProductRow): Product {
 export async function getStoreProducts(): Promise<Product[]> {
   if (!process.env.DATABASE_URL) return products;
   try {
-    const rows = await prisma.product.findMany({ where: { active: true }, include: { category: true, variants: true }, orderBy: { name: "asc" } });
+    const rows = await findStoreProductRows();
     return rows.length
       ? rows.map(mapProduct).sort((first, second) => (productOrder.get(first.slug) ?? Number.MAX_SAFE_INTEGER) - (productOrder.get(second.slug) ?? Number.MAX_SAFE_INTEGER))
       : products;
@@ -50,7 +58,9 @@ export async function getStoreProduct(slug: string): Promise<Product | undefined
 export async function getStoreCategories() {
   if (!process.env.DATABASE_URL) return categories;
   try {
-    const rows = await prisma.category.findMany({ orderBy: { name: "asc" } });
+    const rows = await prisma.orm.public.Category
+      .orderBy((category) => category.name.asc())
+      .all();
     return rows.length ? rows.map(({ id, name, slug, description }) => ({ id, name, slug, description: description ?? "" })) : categories;
   } catch {
     return categories;

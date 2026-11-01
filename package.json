@@ -2,19 +2,28 @@
   "name": "ms-spices-store",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
+  },
+  "overrides": {
+    "@prisma/orm-framework": "8.0.0-rc.22",
+    "@prisma/orm-toolchain": "8.0.0-rc.22"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma contract emit && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
+    "db:generate": "prisma contract emit",
+    "db:update": "prisma db update",
+    "db:push": "prisma db update",
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.7.0",
+    "@prisma/orm-postgres": "8.0.0-rc.22",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^18.0.9",
     "jose": "^6.0.10",
     "lucide-react": "^0.468.0",
     "next": "^15.2.4",
@@ -29,13 +38,10 @@
     "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
-    "prisma": "^6.7.0",
+    "prisma": "8.0.0-rc.29",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2",
+    "typescript": "^5.9.3",
     "vitest": "^3.0.8"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   }
 }

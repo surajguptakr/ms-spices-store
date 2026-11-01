@@ -16,44 +16,63 @@ export async function POST(request: Request) {
   const quantities = new Map<string, number>();
   for (const item of data.items) quantities.set(item.variantId, (quantities.get(item.variantId) ?? 0) + item.quantity);
   try {
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.transaction(async (tx) => {
       const ids = [...quantities.keys()];
-      const variants = await tx.productVariant.findMany({ where: { id: { in: ids }, product: { active: true } }, include: { product: true } });
-      if (variants.length !== ids.length) throw new Error("One or more products are no longer available. Please refresh your bag.");
-      for (const variant of variants) {
+      const variants = await tx.orm.public.ProductVariant
+        .where((variant) => variant.id.in(ids))
+        .include("product")
+        .all();
+      const activeVariants = variants.filter((variant) => variant.product.active);
+      if (activeVariants.length !== ids.length) throw new Error("One or more products are no longer available. Please refresh your bag.");
+      for (const variant of activeVariants) {
         const quantity = quantities.get(variant.id)!;
         if (variant.stock < quantity) throw new Error(`${variant.product.name} has only ${variant.stock} left in stock.`);
       }
-      const settingRows = await tx.setting.findMany({ where: { key: { in: ["shippingFee", "freeShippingThreshold", "codEnabled"] } } });
+      const settingRows = await tx.orm.public.Setting
+        .where((setting) => setting.key.in(["shippingFee", "freeShippingThreshold", "codEnabled"]))
+        .all();
       const settings = Object.fromEntries(settingRows.map((setting) => [setting.key, setting.value]));
       if (settings.codEnabled === "false") throw new Error("Cash on delivery is temporarily unavailable.");
-      const lines = variants.map((variant) => ({ variant, quantity: quantities.get(variant.id)! }));
+      const lines = activeVariants.map((variant) => ({ variant, quantity: quantities.get(variant.id)! }));
       const pricing = calculatePricing(lines.map(({ variant, quantity }) => ({ unitPrice: variant.price, quantity })), {
         shippingFee: Number(settings.shippingFee) || 80,
         freeShippingThreshold: Number(settings.freeShippingThreshold) || 999,
       });
       for (const { variant, quantity } of lines) {
-        const changed = await tx.productVariant.updateMany({ where: { id: variant.id, stock: { gte: quantity } }, data: { stock: { decrement: quantity } } });
-        if (changed.count !== 1) throw new Error(`${variant.product.name} stock changed. Please try again.`);
+        const stockUpdate = tx.raw.sql`
+          UPDATE "ProductVariant"
+          SET "stock" = "stock" - ${quantity}
+          WHERE "id" = ${variant.id} AND "stock" >= ${quantity}
+        `.affectedCount().build();
+        const { affectedRows } = await tx.execute(stockUpdate);
+        if (affectedRows !== 1) throw new Error(`${variant.product.name} stock changed. Please try again.`);
       }
       const orderNumber = `MS-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-      return tx.order.create({
-        data: {
-          orderNumber,
-          subtotal: pricing.subtotal,
-          shipping: pricing.shipping,
-          total: pricing.total,
-          customerName: data.customerName,
-          email: data.email,
-          phone: data.phone,
-          address: data.address,
-          city: data.city,
-          state: data.state,
-          pinCode: data.pinCode,
-          notes: data.notes,
-          items: { create: lines.map(({ variant, quantity }) => ({ productName: variant.product.name, variantLabel: variant.size, sku: variant.sku, unitPrice: variant.price, quantity })) },
-        },
+      const order = await tx.orm.public.Order.create({
+        orderNumber,
+        subtotal: pricing.subtotal,
+        shipping: pricing.shipping,
+        total: pricing.total,
+        customerName: data.customerName,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        city: data.city,
+        state: data.state,
+        pinCode: data.pinCode,
+        notes: data.notes,
       });
+      await tx.orm.public.OrderItem.createAll(
+        lines.map(({ variant, quantity }) => ({
+          orderId: order.id,
+          productName: variant.product.name,
+          variantLabel: variant.size,
+          sku: variant.sku,
+          unitPrice: variant.price,
+          quantity,
+        })),
+      );
+      return order;
     });
     return NextResponse.json({ orderNumber: order.orderNumber }, { status: 201 });
   } catch (error) {

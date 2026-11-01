@@ -1,0 +1,109 @@
+// use prisma-8
+
+native_enum OrderStatus {
+  PENDING = "PENDING"
+  CONFIRMED = "CONFIRMED"
+  PROCESSING = "PROCESSING"
+  SHIPPED = "SHIPPED"
+  DELIVERED = "DELIVERED"
+  CANCELLED = "CANCELLED"
+}
+
+model Category {
+  id          String    @id @onCreate(cuid(2))
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime(storage: timestamp) @default(now())
+  updatedAt   DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+}
+
+model Product {
+  id          String           @id @onCreate(cuid(2))
+  name        String
+  slug        String           @unique
+  description String
+  origin      String
+  ingredients String?[]
+  imageUrl    String?
+  featured    Boolean          @default(false)
+  active      Boolean          @default(true)
+  categoryId  String
+  category    Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  variants    ProductVariant[]
+  createdAt   DateTime(storage: timestamp) @default(now())
+  updatedAt   DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+}
+
+model ProductVariant {
+  id          String   @id @onCreate(cuid(2))
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  size        String
+  weightGrams Int
+  price       Int
+  mrp         Int?
+  stock       Int      @default(0)
+  sku         String   @unique
+  createdAt   DateTime(storage: timestamp) @default(now())
+  updatedAt   DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+
+  @@unique([productId, size])
+}
+
+model Order {
+  id            String      @id @onCreate(cuid(2))
+  orderNumber   String      @unique
+  status        pg.enum(OrderStatus) @default("PENDING")
+  paymentMethod String      @default("COD")
+  subtotal      Int
+  shipping      Int
+  total         Int
+  customerName  String
+  email         String
+  phone         String
+  address       String
+  city          String
+  state         String
+  pinCode       String
+  notes         String?
+  items         OrderItem[]
+  createdAt     DateTime(storage: timestamp) @default(now())
+  updatedAt     DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+}
+
+model OrderItem {
+  id           String  @id @onCreate(cuid(2))
+  orderId      String
+  order        Order   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productName  String
+  variantLabel String
+  sku          String
+  unitPrice    Int
+  quantity     Int
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+}
+
+model AdminUser {
+  id           String   @id @onCreate(cuid(2))
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime(storage: timestamp) @default(now())
+  updatedAt    DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+}
+
+model ContactMessage {
+  id        String   @id @onCreate(cuid(2))
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  createdAt DateTime(storage: timestamp) @default(now())
+}

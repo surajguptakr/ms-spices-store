@@ -8,7 +8,11 @@ export async function GET() {
   const unauthorized = await requireAdmin();
   if (unauthorized) return unauthorized;
   try {
-    const products = await prisma.product.findMany({ include: { category: true, variants: true }, orderBy: { name: "asc" } });
+    const products = await prisma.orm.public.Product
+      .include("category")
+      .include("variants")
+      .orderBy((product) => product.name.asc())
+      .all();
     return NextResponse.json({ products });
   } catch {
     return NextResponse.json({ error: "Could not load products." }, { status: 503 });
@@ -22,7 +26,24 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "Product details are invalid.", details: parsed.error.flatten() }, { status: 400 });
   try {
     const { variants, ...product } = parsed.data;
-    const created = await prisma.product.create({ data: { ...product, imageUrl: product.imageUrl || null, variants: { create: variants.map(({ id: _id, ...variant }) => variant) } } });
+    const created = await prisma.transaction(async (tx) => {
+      const savedProduct = await tx.orm.public.Product.create({
+        ...product,
+        imageUrl: product.imageUrl || null,
+      });
+      await tx.orm.public.ProductVariant.createAll(
+        variants.map(({ id: _id, ...variant }) => ({
+          ...variant,
+          productId: savedProduct.id,
+        })),
+      );
+      return tx.orm.public.Product
+        .where({ id: savedProduct.id })
+        .include("category")
+        .include("variants")
+        .first();
+    });
+    if (!created) throw new Error("Created product could not be loaded.");
     return NextResponse.json({ product: created }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Could not create product. Check the slug, SKU, and category." }, { status: 409 });
@@ -38,13 +59,30 @@ export async function PUT(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "Product details are invalid." }, { status: 400 });
   try {
     const { id, variants, ...data } = parsed.data;
-    const product = await prisma.$transaction(async (tx) => {
-      await tx.product.update({ where: { id }, data: { ...data, imageUrl: data.imageUrl || null } });
+    const product = await prisma.transaction(async (tx) => {
+      const savedProduct = await tx.orm.public.Product
+        .where({ id })
+        .update({ ...data, imageUrl: data.imageUrl || null });
+      if (!savedProduct) throw new Error("Product not found.");
       for (const { id: variantId, ...variant } of variants) {
-        if (variantId) await tx.productVariant.update({ where: { id: variantId }, data: variant });
-        else await tx.productVariant.upsert({ where: { sku: variant.sku }, update: variant, create: { ...variant, productId: id } });
+        if (variantId) {
+          const updatedVariant = await tx.orm.public.ProductVariant
+            .where({ id: variantId })
+            .update(variant);
+          if (!updatedVariant) throw new Error("Product variant not found.");
+        } else {
+          await tx.orm.public.ProductVariant.upsert({
+            create: { ...variant, productId: id },
+            update: variant,
+            conflictOn: { sku: variant.sku },
+          });
+        }
       }
-      return tx.product.findUnique({ where: { id }, include: { category: true, variants: true } });
+      return tx.orm.public.Product
+        .where({ id })
+        .include("category")
+        .include("variants")
+        .first();
     });
     return NextResponse.json({ product });
   } catch {
