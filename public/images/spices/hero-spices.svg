@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+  <title id="title">Indian spice table illustrative artwork</title><desc id="desc">A premium overhead still-life illustration of turmeric, red chilli, cumin and coriander spices in ceramic bowls.</desc>
+  <defs>
+    <linearGradient id="table" x2="0" y2="1"><stop stop-color="#ddd0bb"/><stop offset="1" stop-color="#bea98c"/></linearGradient>
+    <radialGradient id="turmeric"><stop stop-color="#ffc63d"/><stop offset="1" stop-color="#d77f13"/></radialGradient>
+    <radialGradient id="chilli"><stop stop-color="#c83a26"/><stop offset="1" stop-color="#76251e"/></radialGradient>
+    <radialGradient id="cumin"><stop stop-color="#a8783c"/><stop offset="1" stop-color="#503822"/></radialGradient>
+    <radialGradient id="coriander"><stop stop-color="#9f9366"/><stop offset="1" stop-color="#566041"/></radialGradient>
+    <linearGradient id="ceramic" x2="0" y2="1"><stop stop-color="#f5eee1"/><stop offset="1" stop-color="#b7a48c"/></linearGradient>
+    <filter id="soft-shadow" x="-.3" y="-.3" width="1.6" height="1.7"><feGaussianBlur stdDeviation="25"/></filter>
+    <pattern id="cumin-seeds" width="36" height="30" patternUnits="userSpaceOnUse"><ellipse cx="9" cy="8" rx="7" ry="3" transform="rotate(-28 9 8)" fill="#8c6134"/><ellipse cx="26" cy="23" rx="7" ry="3" transform="rotate(18 26 23)" fill="#684626"/><path d="m5 8 8-1m9 16 8-2" stroke="#d0a66a" stroke-width="1"/></pattern>
+  </defs>
+  <rect width="1600" height="1100" fill="url(#table)"/>
+  <path d="M0 224Q338 162 664 240t936-33M0 875q365-98 790 8t810-19" fill="none" stroke="#a98f6d" stroke-width="3" opacity=".18"/>
+  <g opacity=".15" stroke="#755e42" stroke-width="3"><path d="M170 0v1100M420 0v1100M1260 0v1100M1490 0v1100"/><path d="M0 380h1600M0 696h1600"/></g>
+  <ellipse cx="770" cy="590" rx="600" ry="412" fill="#4b3828" opacity=".21" filter="url(#soft-shadow)"/>
+  <g transform="rotate(-12 490 485)"><ellipse cx="490" cy="485" rx="270" ry="235" fill="#8c7458"/><ellipse cx="490" cy="465" rx="246" ry="213" fill="url(#ceramic)"/><ellipse cx="490" cy="453" rx="205" ry="175" fill="url(#turmeric)"/><path d="M304 464q174-140 365-6-161 147-354 61z" fill="#f8cd4c" opacity=".32"/></g>
+  <g transform="rotate(13 1087 410)"><ellipse cx="1087" cy="410" rx="237" ry="214" fill="#75614b"/><ellipse cx="1087" cy="392" rx="215" ry="194" fill="url(#ceramic)"/><ellipse cx="1087" cy="384" rx="177" ry="159" fill="url(#chilli)"/><path d="M950 390q109-126 269-8-105 121-247 61z" fill="#ee6843" opacity=".32"/></g>
+  <g transform="rotate(7 793 796)"><ellipse cx="793" cy="796" rx="249" ry="202" fill="#75614b"/><ellipse cx="793" cy="779" rx="225" ry="180" fill="url(#ceramic)"/><ellipse cx="793" cy="766" rx="184" ry="145" fill="url(#cumin)"/><ellipse cx="793" cy="766" rx="164" ry="127" fill="url(#cumin-seeds)" opacity=".75"/></g>
+  <g transform="rotate(-10 1260 784)"><ellipse cx="1260" cy="784" rx="185" ry="158" fill="#77634a"/><ellipse cx="1260" cy="771" rx="164" ry="140" fill="url(#ceramic)"/><ellipse cx="1260" cy="760" rx="129" ry="106" fill="url(#coriander)"/><g fill="#b8ad80"><circle cx="1200" cy="722" r="12"/><circle cx="1240" cy="704" r="11"/><circle cx="1284" cy="738" r="13"/><circle cx="1321" cy="781" r="11"/><circle cx="1234" cy="791" r="12"/><circle cx="1281" cy="815" r="10"/></g></g>
+  <g fill="#a53a28"><path d="M251 794q60-94 122-57-40 85-111 83l-11-26z"/><path d="M292 827q77-70 121-17-57 69-120 48l-1-31z"/><path d="M1284 202q55-80 108-38-38 76-101 62l-7-24z"/><path d="M1374 235q64-73 110-29-46 70-105 53l-5-24z"/></g>
+  <g fill="#536942"><path d="M304 738q-4-37 35-43 16 29-16 53z"/><path d="M363 785q18-39 52-26 2 32-37 42z"/><path d="M1327 165q4-37 43-37 11 32-25 48z"/><path d="M1414 203q21-34 51-16-5 31-42 32z"/></g>
+  <g fill="#8c6842"><ellipse cx="250" cy="581" rx="13" ry="5" transform="rotate(-20 250 581)"/><ellipse cx="306" cy="638" rx="14" ry="5" transform="rotate(24 306 638)"/><ellipse cx="1412" cy="548" rx="15" ry="5" transform="rotate(-30 1412 548)"/><ellipse cx="1356" cy="592" rx="13" ry="5" transform="rotate(15 1356 592)"/><ellipse cx="1040" cy="881" rx="14" ry="5" transform="rotate(-12 1040 881)"/></g>
+  <g fill="#60734d"><path d="M90 270q71-90 134-18-60 99-134 18z"/><path d="M140 296q99-54 135 28-91 65-135-28z"/><path d="M76 315q31-104 112-79-21 109-112 79z"/><path d="M1400 944q65-85 124-26-52 95-124 26z"/><path d="M1442 971q90-46 122 31-84 57-122-31z"/></g>
+  <rect x="54" y="54" width="341" height="45" rx="22" fill="#26372d" opacity=".91"/><text x="78" y="83" fill="#f3ead9" font-family="Arial,sans-serif" font-size="16" letter-spacing="2">ILLUSTRATIVE SPICE ART - NOT A PHOTO</text>
+</svg>

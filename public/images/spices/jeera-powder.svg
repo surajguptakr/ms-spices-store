@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1125" role="img" aria-labelledby="title desc">
+  <title id="title">Jeera powder illustrative spice artwork</title>
+  <desc id="desc">A handmade ceramic bowl of cumin powder with scattered cumin seeds on a warm stone surface.</desc>
+  <defs>
+    <linearGradient id="ground" x2="0" y2="1"><stop stop-color="#f1e7d3"/><stop offset="1" stop-color="#d9c4a0"/></linearGradient>
+    <radialGradient id="powder"><stop stop-color="#a36d31"/><stop offset=".72" stop-color="#805020"/><stop offset="1" stop-color="#674019"/></radialGradient>
+    <linearGradient id="bowl" x2="0" y2="1"><stop stop-color="#8d5c36"/><stop offset="1" stop-color="#4a3024"/></linearGradient>
+    <filter id="shadow" x="-.3" y="-.3" width="1.6" height="1.8"><feGaussianBlur stdDeviation="24"/></filter>
+    <pattern id="seeds" width="44" height="38" patternUnits="userSpaceOnUse"><ellipse cx="10" cy="12" rx="8" ry="3.2" transform="rotate(-25 10 12)" fill="#b18446"/><path d="m4 12 12-1" stroke="#e0bb77" stroke-width="1"/><ellipse cx="32" cy="30" rx="7" ry="3" transform="rotate(24 32 30)" fill="#78502d"/></pattern>
+  </defs>
+  <rect width="900" height="1125" fill="url(#ground)"/><circle cx="720" cy="275" r="255" fill="#e5d5b8" opacity=".8"/><path d="M0 700Q235 650 440 704t460-8v429H0z" fill="#cdb38a" opacity=".45"/>
+  <text x="62" y="82" fill="#594735" font-family="Georgia,serif" font-size="21" letter-spacing="3">M.S. TRADERS / SPICE STUDY</text><text x="62" y="150" fill="#26372d" font-family="Georgia,serif" font-size="64">Jeera powder</text><text x="65" y="188" fill="#77664f" font-family="Arial,sans-serif" font-size="17">ILLUSTRATIVE ART - PHOTO PLACEHOLDER</text>
+  <ellipse cx="464" cy="816" rx="318" ry="79" fill="#503723" opacity=".25" filter="url(#shadow)"/><ellipse cx="460" cy="808" rx="306" ry="112" fill="#c8a779"/><path d="M154 804q28 230 306 235 282-5 306-235H154z" fill="url(#bowl)"/><path d="M181 845q92 131 279 135 192-5 278-135" fill="none" stroke="#b57c4d" stroke-width="11" opacity=".66"/><ellipse cx="460" cy="802" rx="306" ry="109" fill="#e8d6b9"/>
+  <path d="M228 801q83-74 150-112 52-31 99-9 77 37 218 121-128 71-236 76-130 5-231-76z" fill="url(#powder)"/><path d="M228 801q83-74 150-112 52-31 99-9 77 37 218 121-128 71-236 76-130 5-231-76z" fill="url(#seeds)" opacity=".34"/>
+  <g fill="#b38342"><ellipse cx="218" cy="665" rx="14" ry="5" transform="rotate(-28 218 665)"/><ellipse cx="278" cy="712" rx="13" ry="5" transform="rotate(30 278 712)"/><ellipse cx="337" cy="655" rx="12" ry="4" transform="rotate(-12 337 655)"/><ellipse cx="611" cy="706" rx="14" ry="5" transform="rotate(25 611 706)"/><ellipse cx="690" cy="761" rx="12" ry="4" transform="rotate(-16 690 761)"/><ellipse cx="257" cy="930" rx="14" ry="5" transform="rotate(18 257 930)"/></g>
+  <path d="M77 1017h746" stroke="#927855" stroke-opacity=".55"/><text x="63" y="1065" fill="#655640" font-family="Arial,sans-serif" font-size="15">ILLUSTRATION ONLY - NOT PRODUCT PACKAGING</text>
+</svg>
